@@ -1,0 +1,193 @@
+:root {
+    --bg-color: #0f172a;
+    --text-color: #f8fafc;
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --surface: rgba(30, 41, 59, 0.7);
+    --border: rgba(255, 255, 255, 0.1);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-color);
+    background-image: radial-gradient(circle at top right, #1e1b4b 0%, var(--bg-color) 60%);
+    color: var(--text-color);
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    user-select: none;
+}
+
+.container {
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 40px;
+    background: linear-gradient(135deg, #60a5fa, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
+}
+
+.wheel-container {
+    position: relative;
+    width: 320px;
+    height: 320px;
+    margin: 0 auto 40px auto;
+    filter: drop-shadow(0 0 30px rgba(59, 130, 246, 0.2));
+}
+
+#wheelCanvas {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    /* Smooth rotation with ease-out effect */
+    transition: transform 4.5s cubic-bezier(0.15, 0.85, 0.15, 1); 
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+}
+
+/* Central pivot point of the wheel */
+.wheel-container::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle, #f8fafc, #cbd5e1);
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    z-index: 15;
+}
+
+/* The pointer at the top */
+.pointer {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 35px solid #f87171;
+    z-index: 20;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+}
+
+#spinBtn {
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
+    border: none;
+    padding: 16px 50px;
+    font-size: 20px;
+    font-weight: 800;
+    color: white;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+#spinBtn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+}
+
+#spinBtn:active {
+    transform: translateY(1px) scale(0.95);
+}
+
+#spinBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    background: #475569;
+    box-shadow: none;
+}
+
+/* Modal Window (Glassmorphism) */
+#resultModal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+#resultModal.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-content {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 50px 30px;
+    border-radius: 28px;
+    text-align: center;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    transform: scale(1);
+    transition: transform 0.3s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+    width: 80%;
+    max-width: 350px;
+}
+
+#resultModal.hidden .modal-content {
+    transform: scale(0.8) translateY(20px);
+}
+
+.confetti-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+    animation: bounce 2s infinite ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+#resultText {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 30px;
+    color: #4ade80;
+    text-shadow: 0 0 20px rgba(74, 222, 128, 0.4);
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+#closeBtn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#closeBtn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
