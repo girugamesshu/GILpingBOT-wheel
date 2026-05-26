@@ -33,6 +33,19 @@ const colors = ["#ff0055", "#00f0ff", "#8a2be2", "#ff00ff", "#00ff88"];
 function drawWheel() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
+    // Auto-scale font size based on segment count
+    let baseFontSize;
+    if (numSegments <= 3) baseFontSize = 20;
+    else if (numSegments <= 5) baseFontSize = 17;
+    else if (numSegments <= 8) baseFontSize = 14;
+    else if (numSegments <= 12) baseFontSize = 11;
+    else baseFontSize = 9;
+    
+    // Find the longest option text and shrink further if needed
+    const maxTextLen = Math.max(...options.map(o => o.length));
+    if (maxTextLen > 12) baseFontSize = Math.min(baseFontSize, baseFontSize * (12 / maxTextLen));
+    baseFontSize = Math.max(baseFontSize, 7); // minimum readable size
+    
     for (let i = 0; i < numSegments; i++) {
         const angle = i * arcSize;
         const color = colors[i % colors.length];
@@ -43,7 +56,7 @@ function drawWheel() {
         ctx.fillStyle = color;
         ctx.fill();
         
-        // Add neon glow to segment borders
+        // Segment borders
         ctx.lineWidth = 2;
         ctx.strokeStyle = "#050510";
         ctx.stroke();
@@ -54,11 +67,20 @@ function drawWheel() {
         ctx.rotate(angle + arcSize / 2);
         ctx.textAlign = "right";
         ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 18px 'Orbitron', sans-serif";
+        ctx.font = `bold ${Math.round(baseFontSize)}px 'Orbitron', sans-serif`;
         ctx.shadowColor = "#000";
-        ctx.shadowBlur = 5;
-        // Max width for text
-        ctx.fillText(options[i], radius - 20, 6, radius - 40);
+        ctx.shadowBlur = 4;
+        
+        // Truncate text if too long for segment
+        let text = options[i];
+        const maxWidth = radius - 35;
+        if (ctx.measureText(text).width > maxWidth && text.length > 3) {
+            while (ctx.measureText(text + "…").width > maxWidth && text.length > 1) {
+                text = text.slice(0, -1);
+            }
+            text += "…";
+        }
+        ctx.fillText(text, radius - 20, Math.round(baseFontSize / 3), maxWidth);
         ctx.restore();
     }
 }
