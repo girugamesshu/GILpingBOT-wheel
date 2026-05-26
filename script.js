@@ -71,16 +71,30 @@ function spinWheel() {
         winner = options[targetIndex];
     }
     
-    // Calculate rotation to make winner land at the top (pointer is at top = -PI/2)
-    const targetAngle = targetIndex * arcSize + (arcSize / 2);
-    const topAngle = Math.PI / 2; 
+    // The pointer is at the top (12 o'clock = -PI/2 in canvas coordinates)
+    // Canvas draws segment 0 starting from 3 o'clock (angle=0)
+    // We need the CENTER of the winning segment to align with the pointer
     
-    // Add multiple full rotations (e.g. 10 spins)
-    const spins = 10 * 2 * Math.PI;
-    const finalRotation = spins + (topAngle - targetAngle);
+    // Center angle of the target segment (in canvas space)
+    const segmentCenter = targetIndex * arcSize + arcSize / 2;
+    
+    // Random offset within the segment to avoid landing on edges
+    // Stay within 70% of the segment center (±35% from middle)
+    const offsetRange = arcSize * 0.35;
+    const randomOffset = (Math.random() * 2 - 1) * offsetRange;
+    
+    // The pointer is at top = -PI/2, but CSS rotation goes clockwise
+    // We need to rotate so that segmentCenter + randomOffset ends up at -PI/2 (top)
+    // rotation = -(segmentCenter + randomOffset) - PI/2  (to bring it to top)
+    const baseRotation = -(segmentCenter + randomOffset) - Math.PI / 2;
+    
+    // Add many full rotations for dramatic effect (8-12 spins)
+    const spins = (8 + Math.floor(Math.random() * 5)) * 2 * Math.PI;
+    const finalRotation = spins + baseRotation;
     
     // Apply CSS transform
     canvas.style.transform = `rotate(${finalRotation}rad)`;
+    
     
     // Wait for animation to finish (6s defined in CSS)
     setTimeout(() => {
